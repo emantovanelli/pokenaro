@@ -4,12 +4,17 @@ import tweepy
 import requests
 import sys
 from time import sleep
-from datetime import datetime, timezone, date, timedelta
+from datetime import datetime, timezone, timedelta
 from os.path import exists
+from apscheduler.schedulers.blocking import BlockingScheduler
+
+sched = BlockingScheduler()
+
 
 def log(message):
     print(message)
     sys.stdout.flush()
+
 
 def get_remainig_days():
     diferenca = timedelta(hours=-3)
@@ -87,6 +92,7 @@ def get_pokemon_sprite(pokemon_id):
             handler.close()
     return path
 
+
 def config_api():
     consumer_key = os.environ.get("CONSUMER_KEY")
     consumer_secret = os.environ.get("CONSUMER_SECRET")
@@ -99,6 +105,8 @@ def config_api():
     api = tweepy.API(auth)
     return api
 
+
+@sched.scheduled_job('interval', minutes=1)
 def main():
     # api = config_api()
     # log('API configured')
@@ -115,8 +123,3 @@ def main():
     #     make_tweet(api, days, pokemon[0], pokemon[1], pokemon_sprite)
     #
     #     sleep(86400)  # sleeps for 24 hours
-
-
-if __name__ == "__main__":
-    print('Starting server')
-    main()
