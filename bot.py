@@ -123,3 +123,5 @@ def main():
     #     make_tweet(api, days, pokemon[0], pokemon[1], pokemon_sprite)
     #
     #     sleep(86400)  # sleeps for 24 hours
+
+sched.start()
