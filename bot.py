@@ -106,7 +106,7 @@ def config_api():
     return api
 
 
-@sched.scheduled_job('interval', hours=24)
+@sched.scheduled_job('interval', hours=1)
 def main():
     api = config_api()
     log('API configurada')
