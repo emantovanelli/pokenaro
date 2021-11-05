@@ -100,20 +100,21 @@ def config_api():
     return api
 
 def main():
-    api = config_api()
-    log('API configured')
+    # api = config_api()
+    # log('API configured')
+    log('Teste app')
 
-    while True:
-        days = get_remainig_days()
-        log('Remaining days: {}'.format(days))
-
-        pokemon = get_pokemon(days)
-        log('Pokemon of the day: {}'.format(pokemon[0]))
-        pokemon_sprite = get_pokemon_sprite(days)
-
-        make_tweet(api, days, pokemon[0], pokemon[1], pokemon_sprite)
-
-        sleep(86400)  # sleeps for 24 hours
+    # while True:
+    #     days = get_remainig_days()
+    #     log('Remaining days: {}'.format(days))
+    #
+    #     pokemon = get_pokemon(days)
+    #     log('Pokemon of the day: {}'.format(pokemon[0]))
+    #     pokemon_sprite = get_pokemon_sprite(days)
+    #
+    #     make_tweet(api, days, pokemon[0], pokemon[1], pokemon_sprite)
+    #
+    #     sleep(86400)  # sleeps for 24 hours
 
 
 if __name__ == "__main__":
