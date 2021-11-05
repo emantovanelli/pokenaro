@@ -1,3 +1,4 @@
+import os
 import json
 import tweepy
 import requests
@@ -27,10 +28,13 @@ def make_tweet(api, dias, pokemon_name, pokemon_id, pokemon_sprite):
     tweet_template = "O {} veio falar que faltam só mais {} dias para o Bolsonaro sair da presidência!\n\n #{} - {}"
     try:
         tweet = tweet_template.format(pokemon_name, dias, pokemon_name, pokemon_id)
+        print('Uploading media')
         media = api.media_upload(filename=pokemon_sprite, file=open(pokemon_sprite, 'rb'))
+
+        print('Seding tweet')
         tweet_result = api.update_status(status=tweet, media_ids=[media.media_id])
 
-        print("Upload is done")
+        print("Tweet is sent")
     except Exception as e:
         print("Error creating tweet")
 
@@ -79,26 +83,29 @@ def get_pokemon_sprite(pokemon_id):
             handler.close()
     return path
 
-
-def main():
-    with open('config.json') as json_file:
-        data = json.load(json_file)
-        consumer_key = data['consumer_key']
-        consumer_secret = data['consumer_secret']
-        access_token = data['access_token']
-        access_token_secret = data['access_token_secret']
+def config_api():
+    consumer_key = os.environ.get("CONSUMER_KEY")
+    consumer_secret = os.environ.get("CONSUMER_SECRET")
+    access_token = os.environ.get("ACCESS_TOKEN")
+    access_token_secret = os.environ.get("ACCESS_TOKEN_SECRET")
 
     auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
     auth.set_access_token(access_token, access_token_secret)
 
     api = tweepy.API(auth)
+    return api
 
-    while False:
+def main():
+    api = config_api()
+    print('API configured')
+
+    while True:
         days = get_remainig_days()
-        pokemon = get_pokemon(days)
+        print('Remaining days: {}'.format(days))
 
+        pokemon = get_pokemon(days)
+        print('Pokemon of the day: {}'.format(pokemon[0]))
         pokemon_sprite = get_pokemon_sprite(days)
-        print(pokemon[0])
 
         make_tweet(api, days, pokemon[0], pokemon[1], pokemon_sprite)
 
@@ -106,4 +113,5 @@ def main():
 
 
 if __name__ == "__main__":
+    print('Starting server')
     main()
