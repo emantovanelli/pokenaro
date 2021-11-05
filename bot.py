@@ -108,20 +108,17 @@ def config_api():
 
 @sched.scheduled_job('interval', minutes=1)
 def main():
-    # api = config_api()
-    # log('API configured')
-    log('Teste app heroku')
+    api = config_api()
+    log('API configured')
 
-    # while True:
-    #     days = get_remainig_days()
-    #     log('Remaining days: {}'.format(days))
-    #
-    #     pokemon = get_pokemon(days)
-    #     log('Pokemon of the day: {}'.format(pokemon[0]))
-    #     pokemon_sprite = get_pokemon_sprite(days)
-    #
-    #     make_tweet(api, days, pokemon[0], pokemon[1], pokemon_sprite)
-    #
-    #     sleep(86400)  # sleeps for 24 hours
+    days = get_remainig_days()
+    log('Remaining days: {}'.format(days))
+
+    pokemon = get_pokemon(days)
+    log('Pokemon of the day: {}'.format(pokemon[0]))
+    pokemon_sprite = get_pokemon_sprite(days)
+
+    make_tweet(api, days, pokemon[0], pokemon[1], pokemon_sprite)
+
 
 sched.start()
