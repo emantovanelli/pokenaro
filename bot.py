@@ -102,7 +102,7 @@ def config_api():
 def main():
     # api = config_api()
     # log('API configured')
-    log('Teste app')
+    log('Teste app heroku')
 
     # while True:
     #     days = get_remainig_days()
