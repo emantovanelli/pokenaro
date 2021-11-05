@@ -37,15 +37,15 @@ def make_tweet(api, dias, pokemon_name, pokemon_id, pokemon_sprite):
     tweet_template = "O {} veio falar que faltam só mais {} dias para o Bolsonaro sair da presidência!\n\n #{} - {}"
     try:
         tweet = tweet_template.format(pokemon_name, dias, pokemon_name, pokemon_id)
-        log('Uploading media')
+        log('Subindo media')
         media = api.media_upload(filename=pokemon_sprite, file=open(pokemon_sprite, 'rb'))
 
-        log('Seding tweet')
+        log('Enviando tweet')
         tweet_result = api.update_status(status=tweet, media_ids=[media.media_id])
 
-        log("Tweet is sent")
+        log("Tweet foi enviado")
     except Exception as e:
-        log("Error creating tweet")
+        log("Error ao criar o tweet")
 
         print(e)
 
@@ -109,13 +109,13 @@ def config_api():
 @sched.scheduled_job('interval', hours=24)
 def main():
     api = config_api()
-    log('API configured')
+    log('API configurada')
 
     days = get_remainig_days()
-    log('Remaining days: {}'.format(days))
+    log('Dias restantes: {}'.format(days))
 
     pokemon = get_pokemon(days)
-    log('Pokemon of the day: {}'.format(pokemon[0]))
+    log('Pokemon do dia: {}'.format(pokemon[0]))
     pokemon_sprite = get_pokemon_sprite(days)
 
     make_tweet(api, days, pokemon[0], pokemon[1], pokemon_sprite)
