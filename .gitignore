@@ -1,0 +1,7 @@
+*.pyc
+.env
+\.vscode\
+# User-specific stuff:
+.idea/*
+config.json
+pikachu.jpg
