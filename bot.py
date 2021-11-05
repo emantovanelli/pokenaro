@@ -2,10 +2,14 @@ import os
 import json
 import tweepy
 import requests
+import sys
 from time import sleep
 from datetime import datetime, timezone, date, timedelta
 from os.path import exists
 
+def log(message):
+    print(message)
+    sys.stdout.flush()
 
 def get_remainig_days():
     diferenca = timedelta(hours=-3)
@@ -28,15 +32,15 @@ def make_tweet(api, dias, pokemon_name, pokemon_id, pokemon_sprite):
     tweet_template = "O {} veio falar que faltam só mais {} dias para o Bolsonaro sair da presidência!\n\n #{} - {}"
     try:
         tweet = tweet_template.format(pokemon_name, dias, pokemon_name, pokemon_id)
-        print('Uploading media')
+        log('Uploading media')
         media = api.media_upload(filename=pokemon_sprite, file=open(pokemon_sprite, 'rb'))
 
-        print('Seding tweet')
+        log('Seding tweet')
         tweet_result = api.update_status(status=tweet, media_ids=[media.media_id])
 
-        print("Tweet is sent")
+        log("Tweet is sent")
     except Exception as e:
-        print("Error creating tweet")
+        log("Error creating tweet")
 
         print(e)
 
@@ -46,15 +50,15 @@ def get_pokemons_sprite(quantity):
         path = 'pokemons_image/' + str(i) + '.png'
         file_exists = exists(path)
         if not file_exists:
-            print('Baixando infos do pokemon: ' + str(i))
+            log('Baixando infos do pokemon: ' + str(i))
             request_pokemon = requests.get(
                 'https://pokeapi.co/api/v2/pokemon/{}'.format(i))
 
             qual_e_esse_pokemon = json.loads(request_pokemon._content)
-            print('Infos do {} baixadas'.format(qual_e_esse_pokemon['name']))
+            log('Infos do {} baixadas'.format(qual_e_esse_pokemon['name']))
 
             with open(path, 'wb') as handler:
-                print('Baixando imagem do {}'.format(qual_e_esse_pokemon['name']))
+                log('Baixando imagem do {}'.format(qual_e_esse_pokemon['name']))
 
                 if qual_e_esse_pokemon['sprites']['other']['official-artwork']['front_default'] is not None:
                     img_data = requests.get(
@@ -63,7 +67,7 @@ def get_pokemons_sprite(quantity):
                     img_data = requests.get(qual_e_esse_pokemon['sprites']['front-default']).content
                 handler.write(img_data)
                 handler.close()
-                print('Imagem do {} baixada'.format(qual_e_esse_pokemon['name']))
+                log('Imagem do {} baixada'.format(qual_e_esse_pokemon['name']))
         sleep(1)
 
 
@@ -97,14 +101,14 @@ def config_api():
 
 def main():
     api = config_api()
-    print('API configured')
+    log('API configured')
 
     while True:
         days = get_remainig_days()
-        print('Remaining days: {}'.format(days))
+        log('Remaining days: {}'.format(days))
 
         pokemon = get_pokemon(days)
-        print('Pokemon of the day: {}'.format(pokemon[0]))
+        log('Pokemon of the day: {}'.format(pokemon[0]))
         pokemon_sprite = get_pokemon_sprite(days)
 
         make_tweet(api, days, pokemon[0], pokemon[1], pokemon_sprite)
