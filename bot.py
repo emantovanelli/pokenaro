@@ -8,7 +8,7 @@ from datetime import datetime, timezone, timedelta
 from os.path import exists
 from apscheduler.schedulers.blocking import BlockingScheduler
 
-sched = BlockingScheduler()
+sched = BlockingScheduler(timezone="america/sao_paulo")
 
 
 def log(message):
