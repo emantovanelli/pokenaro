@@ -10,6 +10,7 @@ from apscheduler.schedulers.blocking import BlockingScheduler
 
 sched = BlockingScheduler(timezone="america/sao_paulo")
 
+RETRIES = 0
 
 def log(message):
     print(message)
@@ -33,7 +34,7 @@ def get_pokemon(pokemon_id):
     return qual_e_esse_pokemon['name'].capitalize(), pokemon_id, qual_e_esse_pokemon['sprites']
 
 
-def make_tweet(api, dias, pokemon_name, pokemon_id, pokemon_sprite, retry=0):
+def make_tweet(api, dias, pokemon_name, pokemon_id, pokemon_sprite):
     tweet_template = "O {} veio falar que faltam só mais {} dias para o Bolsonaro sair da presidência!\n\n #{} - {}"
     try:
         tweet = tweet_template.format(pokemon_name, dias, pokemon_name, pokemon_id)
@@ -45,11 +46,8 @@ def make_tweet(api, dias, pokemon_name, pokemon_id, pokemon_sprite, retry=0):
 
         log("Tweet foi enviado")
     except Exception as e:
-        if retry < 3:
-            log("Error ao criar o tweet")
-            print(e)
-            make_tweet(api, dias, pokemon_name, pokemon_id, pokemon_sprite, retry+1)
-        log('quantidade de retries maior que 3')
+        log("Error ao criar o tweet")
+        raise (e)
 
 
 def get_pokemons_sprite(quantity):
@@ -120,7 +118,18 @@ def main():
     log('Pokemon do dia: {}'.format(pokemon[0]))
     pokemon_sprite = get_pokemon_sprite(days)
 
-    make_tweet(api, days, pokemon[0], pokemon[1], pokemon_sprite)
+    for tentativa in range(3):
+        try:
+            make_tweet(api, days, pokemon[0], pokemon[1], pokemon_sprite)
+        except Exception as e:
+            print(e)
+        else:
+            break
+    else:
+        log('make tweet error even with retries')
 
+
+# if __name__ == '__main__':
+#     main()
 
 sched.start()
