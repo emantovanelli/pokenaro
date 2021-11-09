@@ -122,6 +122,7 @@ def main():
         try:
             make_tweet(api, days, pokemon[0], pokemon[1], pokemon_sprite)
         except Exception as e:
+            sleep(60)
             print(e)
         else:
             break
