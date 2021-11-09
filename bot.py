@@ -33,7 +33,7 @@ def get_pokemon(pokemon_id):
     return qual_e_esse_pokemon['name'].capitalize(), pokemon_id, qual_e_esse_pokemon['sprites']
 
 
-def make_tweet(api, dias, pokemon_name, pokemon_id, pokemon_sprite):
+def make_tweet(api, dias, pokemon_name, pokemon_id, pokemon_sprite, retry=0):
     tweet_template = "O {} veio falar que faltam só mais {} dias para o Bolsonaro sair da presidência!\n\n #{} - {}"
     try:
         tweet = tweet_template.format(pokemon_name, dias, pokemon_name, pokemon_id)
@@ -45,9 +45,11 @@ def make_tweet(api, dias, pokemon_name, pokemon_id, pokemon_sprite):
 
         log("Tweet foi enviado")
     except Exception as e:
-        log("Error ao criar o tweet")
-
-        print(e)
+        if retry < 3:
+            log("Error ao criar o tweet")
+            print(e)
+            make_tweet(api, dias, pokemon_name, pokemon_id, pokemon_sprite, retry+1)
+        log('quantidade de retries maior que 3')
 
 
 def get_pokemons_sprite(quantity):
