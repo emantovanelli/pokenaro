@@ -7,6 +7,7 @@ from time import sleep
 from datetime import datetime, timezone, timedelta
 from os.path import exists
 from apscheduler.schedulers.blocking import BlockingScheduler
+from apscheduler.triggers.cron import CronTrigger
 
 sched = BlockingScheduler(timezone="america/sao_paulo")
 
@@ -106,7 +107,7 @@ def config_api():
     return api
 
 
-@sched.scheduled_job('interval', hours=24)
+@sched.scheduled_job(CronTrigger.from_crontab('0 12 * * *'))
 def main():
     api = config_api()
     log('API configurada')
